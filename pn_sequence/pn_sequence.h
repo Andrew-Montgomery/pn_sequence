@@ -32,7 +32,7 @@ uint32_t PNSequenceGetPoly(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint3
 
 // Returns a maximal length polynomial with a given order 'm'
 // m can be chosen between [3,31]
-static uint32_t PNSequenceGetMLPoly(uint32_t m);
+uint32_t PNSequenceGetMLPoly(uint32_t m);
 
 struct PNSequenceState;
 
