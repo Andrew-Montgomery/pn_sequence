@@ -33,13 +33,14 @@ uint32_t PNSequenceGetPoly(uint32_t a, uint32_t b, uint32_t c);
 uint32_t PNSequenceGetPoly(uint32_t a, uint32_t b, uint32_t c, uint32_t d);
 uint32_t PNSequenceGetPoly(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t e);
 
-// Returns maximal length polynomial
+// Returns a maximal length polynomial with a given order 'm'
 // m can be chosen between [3,31]
 static uint32_t PNSequenceGetMLPoly(uint32_t m);
 
-// Generates maximal length PN-sequence
-// Uses a fibonacci LFSR approach
-// Sequences repeat in 2^M - 1 bits
+// Generates maximal length (ML) pseudo-noise (PN) sequence
+// Can accept up to a 32-bit polynomial (31st order)
+// Uses a fibonacci LFSR
+// ML Sequences repeat in 2^M - 1 bits
 // Characteristics of maximal length sequence
 //   Number of zeros in sequence is 2^(M-1) -1
 //   Number of ones in sequence is 2^(M-1)
@@ -48,21 +49,25 @@ static uint32_t PNSequenceGetMLPoly(uint32_t m);
 
 struct PNSequenceState;
 
+// Inidicates the required buffer size necessary for Init
 int PNSequenceGetStateSize(int32_t *size);
 
-// Specify polynomial
-// Assumes the polynomial supplied is a maximal length PN-sequence polynomial
-// customPoly should be the polynomail represented as an uint32_t
-//   for example, if the polynomial is x3+x2+1, then a binary representation of
-//   this polynomial is 00..001101, which represents the integer 13.
-// Shift controls
-// Initial seed is the initial state of the shift register.
+// Create PN generator state
+// polynomial - Polynomial which determines the LFSR, represented as an unsigned int
+//   Example, polynomial x^3 + x^2 + 1 = binary 1101 = unsigned int 13. 13 would be provided.
+//   Assumes the polynomial supplied is a maximal length PN-sequence polynomial.
+//   Order is assumed to be the highest bit set
+// shift - Number of states/steps the LFSR is advanced during initialization.
+// initialState - Initial state of the LFSR. This is the state used prior to any shift.
 int PNSequenceInit(PNSequenceState **state, uint32_t polynomial, uint32_t shift, uint32_t initialState, uint8_t *buffer);
 
-// Returns generator to initial state
+// Returns LFSR to initial state, if a non zero shift was provided during
+//   initialization the initial state will include the shift.
 int PNSequenceReset(PNSequenceState *state);
 
-// Generate n bits
-int PNSequenceGenerate(PNSequenceState *state, uint8_t *dst, int iters);
+// Generate n bits in the PN sequence
+// dst - Must be an array of n bytes. Each byte will be set to 0 or 1
+// n - Number of bits to generate
+int PNSequenceGenerate(PNSequenceState *state, uint8_t *dst, int n);
 
 #endif // PN_SEQUENCE_H

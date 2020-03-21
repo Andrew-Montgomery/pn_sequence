@@ -70,7 +70,7 @@ struct PNSequenceState {
 #include <nmmintrin.h>
 #endif
 
-static inline int32_t popcount(uint32_t n)
+static inline int32_t Popcount(uint32_t n)
 {
 #if _WIN32
     return _mm_popcnt_u32(n);
@@ -83,9 +83,9 @@ static inline int32_t popcount(uint32_t n)
 #endif
 }
 
-static inline uint32_t parity(uint32_t n)
+static inline uint32_t Parity(uint32_t n)
 {
-    return popcount(n) & 1;
+    return Popcount(n) & 1;
 }
 
 static inline uint32_t HighestBitSet(uint32_t n)
@@ -147,7 +147,7 @@ int PNSequenceGetStateSize(int32_t *size)
 static inline uint8_t PNSequenceAdvance(PNSequenceState *state)
 {
     uint8_t nextBit = state->state & 1;
-    uint8_t feedBack = parity(state->state & state->poly);
+    uint8_t feedBack = Parity(state->state & state->poly);
     state->state = ((state->state >> 1) | (feedBack << (state->order - 1)));
     return nextBit;
 }
@@ -171,12 +171,13 @@ int PNSequenceInit(PNSequenceState **state,
     // Clamp seed to possible range of values
     initialState &= ((1 << statePtr->order) - 1);
 
+    // Advance the state 'shift' steps
     statePtr->state = initialState;
     for(uint32_t i = 0; i < shift; i++) {
         PNSequenceAdvance(statePtr);
     }
 
-    // Final seed will be the shifted seed
+    // Cache the shifted stated
     statePtr->initialState = statePtr->state;
     return 0;
 }
@@ -192,13 +193,13 @@ int PNSequenceReset(PNSequenceState *state)
     return 0;
 }
 
-int PNSequenceGenerate(PNSequenceState *state, uint8_t *dst, int iters)
+int PNSequenceGenerate(PNSequenceState *state, uint8_t *dst, int n)
 {
-    if(!state || !dst || iters < 0) {
+    if(!state || !dst || n < 0) {
         return -1;
     }
 
-    for(int i = 0; i < iters; i++) {
+    for(int i = 0; i < n; i++) {
         dst[i] = PNSequenceAdvance(state);
     }
 
