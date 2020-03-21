@@ -23,10 +23,7 @@
 
 #include <cstdint>
 
-// References
-// https://en.wikipedia.org/wiki/Linear-feedback_shift_register
-// https://www.xilinx.com/support/documentation/application_notes/xapp052.pdf
-
+// Convience functions for generating polynomials
 uint32_t PNSequenceGetPoly(uint32_t a);
 uint32_t PNSequenceGetPoly(uint32_t a, uint32_t b);
 uint32_t PNSequenceGetPoly(uint32_t a, uint32_t b, uint32_t c);
@@ -36,16 +33,6 @@ uint32_t PNSequenceGetPoly(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint3
 // Returns a maximal length polynomial with a given order 'm'
 // m can be chosen between [3,31]
 static uint32_t PNSequenceGetMLPoly(uint32_t m);
-
-// Generates maximal length (ML) pseudo-noise (PN) sequence
-// Can accept up to a 32-bit polynomial (31st order)
-// Uses a fibonacci LFSR
-// ML Sequences repeat in 2^M - 1 bits
-// Characteristics of maximal length sequence
-//   Number of zeros in sequence is 2^(M-1) -1
-//   Number of ones in sequence is 2^(M-1)
-// Sequence returned is exactly the reverse of the MATLAB generated sequence
-// Ideally, a PN sequence should have an autocorrelation similar to white noise
 
 struct PNSequenceState;
 

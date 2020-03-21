@@ -22,6 +22,7 @@
 
 // LFSR taps for up to 31 degree polynomials
 // For maximal length PN sequences
+// One of several possible polynomial for a given degree.
 static const uint32_t maximalLengthTaps[] =
 {
     0,
